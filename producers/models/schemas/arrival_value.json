@@ -17,8 +17,10 @@
     },
     {
       "name": "line",
-      "type": "enum",
-      "symbols": ["blue", "green", "red"]
+      "type": {"type": "enum",
+               "name": "color",
+               "symbols": ["blue", "green", "red"]
+      }
     },
     {
       "name": "prev_station_id",

@@ -53,8 +53,8 @@ class Producer:
         # TODO: Configure the AvroProducer
         # self.producer = AvroProducer(
         # )
-        schema_registry = CachedSchemaRegistryClient({"url": self.broker_properties.SCHEMA_REGISTRY_URL})
-        self.producer = AvroProducer({"bootstrap.servers": self.broker_properties.BOOTSTRAP_SERVERS_URL},
+        schema_registry = CachedSchemaRegistryClient({"url": self.broker_properties['SCHEMA_REGISTRY_URL']})
+        self.producer = AvroProducer({"bootstrap.servers": self.broker_properties['BOOTSTRAP_SERVERS_URL']},
                                     schema_registry=schema_registry)
 
 
@@ -66,7 +66,7 @@ class Producer:
         # the Kafka Broker.
         #
         #
-        client = AdminClient({"bootstrap.servers": self.broker_properties.BOOTSTRAP_SERVERS_URL})
+        client = AdminClient({"bootstrap.servers": self.broker_properties['BOOTSTRAP_SERVERS_URL']})
         try:
             client.create_topics(
                 [
