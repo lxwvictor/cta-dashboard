@@ -9,7 +9,7 @@
     },
     {
       "name": "train_id",
-      "type": "int"
+      "type": "string"
     },
     {
       "name": "direction",
@@ -17,18 +17,19 @@
     },
     {
       "name": "line",
-      "type": {"type": "enum",
-               "name": "color",
-               "symbols": ["blue", "green", "red"]
-      }
+      "type": "string"
+    },
+    {
+      "name": "train_status",
+      "type": "string"
     },
     {
       "name": "prev_station_id",
-      "type": "int"
+      "type": ["null", "int"]
     },
     {
       "name": "prev_direction",
-      "type": "string"
+      "type": ["null", "string"]
     }
   ]
 }

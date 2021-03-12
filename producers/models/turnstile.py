@@ -66,10 +66,10 @@ class Turnstile(Producer):
                     key_schema=self.key_schema,
                     value={
                         "station_id": self.station.station_id,
-                        "station": self.station.name,
-                        "line": self.station.color
+                        "station_name": self.station.name,
+                        "line": self.station.color.name
                     },
-                    value_schema=self.value_schema,
+                    value_schema=self.value_schema
                 )
         except:
             logger.info("turnstile kafka integration incomplete - skipping")

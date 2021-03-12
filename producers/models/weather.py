@@ -31,7 +31,7 @@ class Weather(Producer):
     summer_months = set((6, 7, 8))
 
 
-    def __init__(self, month):
+    def __init__(self, month):        
         # Below 2 if statements to be executed before super().__init__(), it was placed after it, really strange.
         if Weather.key_schema is None:
             with open(f"{Path(__file__).parents[0]}/schemas/weather_key.json") as f:
@@ -50,8 +50,9 @@ class Weather(Producer):
         # replicas
         #
         #
+
         super().__init__(
-            "weather-month-%d" % month, # TODO: Come up with a better topic name
+            "udacity.chicago.weather", # TODO: Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=3,
@@ -88,14 +89,13 @@ class Weather(Producer):
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
         #
         #
-
         resp = requests.post(
            #
            #
            # TODO: What URL should be POSTed to?
            #
            #
-           f"{Weather.rest_proxy_url}/weather-month-{month}",
+           f"{Weather.rest_proxy_url}/topics/{self.topic_name}",
            #
            #
            # TODO: What Headers need to bet set?
@@ -109,9 +109,12 @@ class Weather(Producer):
                    # TODO: Provide key schema, value schema, and records
                    #
                    #
-                   "key_schema": self.key_schema,
-                   "value_schema": self.value_schema,
-                   "records": [{"key": self.time_millis(), "value": {"temperature": self.temp, "status": self.status}}]
+                   "key_schema": json.dumps(self.key_schema),
+                   "value_schema": json.dumps(self.value_schema),
+                   "records": [{
+                       "key": {"timestamp": self.time_millis()},
+                       "value": {"temperature": self.temp, "status": self.status.name}
+                    }]
                }
            )
         )

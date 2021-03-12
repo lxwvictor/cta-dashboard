@@ -5,7 +5,7 @@ import time
 
 from confluent_kafka import avro
 from confluent_kafka.admin import AdminClient, NewTopic
-from confluent_kafka.avro import AvroProducer, CachedSchemaRegistryClient
+from confluent_kafka.avro import AvroProducer
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +41,8 @@ class Producer:
             # TODO
             # TODO
             # TODO
-            "BOOTSTRAP_SERVERS_URL": "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094",
-            "SCHEMA_REGISTRY_URL": "http://localhost:8081"
+            "bootstrap.servers": "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094",
+            "schema.registry.url": "http://localhost:8081"
         }
 
         # If the topic does not already exist, try to create it
@@ -53,9 +53,7 @@ class Producer:
         # TODO: Configure the AvroProducer
         # self.producer = AvroProducer(
         # )
-        schema_registry = CachedSchemaRegistryClient({"url": self.broker_properties['SCHEMA_REGISTRY_URL']})
-        self.producer = AvroProducer({"bootstrap.servers": self.broker_properties['BOOTSTRAP_SERVERS_URL']},
-                                    schema_registry=schema_registry)
+        self.producer = AvroProducer(self.broker_properties)
 
 
     def create_topic(self):
@@ -66,14 +64,14 @@ class Producer:
         # the Kafka Broker.
         #
         #
-        client = AdminClient({"bootstrap.servers": self.broker_properties['BOOTSTRAP_SERVERS_URL']})
+        client = AdminClient({"bootstrap.servers": self.broker_properties['bootstrap.servers']})
         try:
             client.create_topics(
                 [
                     NewTopic(
                         topic=self.topic_name,
                         num_partitions=self.num_partitions,
-                        replication_factor=self.num_replicas,
+                        replication_factor=self.num_replicas,   
                         # config={
                         #     "cleanup.policy": "delete",
                         #     "compression.type": "lz4",

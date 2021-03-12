@@ -1,1 +1,2 @@
-source /d/GoogleDrive/Study/Zvenv/data-streaming-producers/Scripts/activate
+#!/usr/bin/env bash
+source /d/zvenv/data-streaming-producers/Scripts/activate
