@@ -17,11 +17,17 @@
     },
     {
       "name": "line",
-      "type": "string"
+      "type": {"type": "enum",
+        "name": "line_color",
+        "symbols": ["blue", "green", "red"]
+      }
     },
     {
       "name": "train_status",
-      "type": "string"
+      "type": {"type": "enum",
+        "name": "status",
+        "symbols": ["out_of_service", "in_service", "broken_down"]
+      }      
     },
     {
       "name": "prev_station_id",
