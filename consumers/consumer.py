@@ -46,13 +46,13 @@ class KafkaConsumer:
             self.consumer = AvroConsumer({
                 **self.broker_properties,
                 'group.id': 0,
-                "auto.offset.reset": "earliest"
+                "auto.offset.reset": "earliest" if self.offset_earliest else "latest"
                 })
         else:
             self.consumer = Consumer({
                 "bootstrap.servers": self.broker_properties["bootstrap.servers"],
                 'group.id': 0,
-                "auto.offset.reset": "earliest"
+                "auto.offset.reset": "earliest" if self.offset_earliest else "latest"
                 })
 
         #
