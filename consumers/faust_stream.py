@@ -63,7 +63,7 @@ async def tranform_station(stations):
         elif station.green:
             line = 'green'
         else:
-            logger.warn('No line color')
+            logger.warning('No line color')
             line = None
 
         table[station.station_id] = TransformedStation(

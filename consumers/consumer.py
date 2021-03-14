@@ -101,13 +101,13 @@ class KafkaConsumer:
         #
         message = self.consumer.poll(1.0)
         if message is None:
-            logger.info("no message received by consumer %s" % self.topic_name_pattern)
+            logger.warning("no message received by consumer %s" % self.topic_name_pattern)
             return 0
         elif message.error() is not None:
-            print(f"error from consumer {message.error()}")
+            logger.warning(f"error from consumer {message.error()}, topic: {self.topic_name_pattern}")
             return 1
         else:
-            print(f"consumed message {message.key()}: {message.value()}")
+            logger.info(f"topic: {self.topic_name_pattern}, consumed message {message.key()}: {message.value()}")
             return 1
 
         # logger.info("_consume is incomplete - skipping")
@@ -122,6 +122,6 @@ class KafkaConsumer:
         #
         try:
             self.consumer.close()
-            logger.info("consumer %s closed" % self.topic_name)
+            logger.info("consumer %s closed" % self.topic_name_pattern)
         except:
             logger.info("consumer close incomplete - skipping")
