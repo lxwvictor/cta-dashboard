@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 KAFKA_CONNECT_URL = "http://localhost:8083/connectors"
 CONNECTOR_NAME = "stations"
 
+
 def configure_connector():
     """Starts and configures the Kafka Connect connector"""
     logging.debug("creating or updating kafka connect connector...")
@@ -39,7 +40,13 @@ def configure_connector():
                "value.converter.schemas.enable": "false",
                "batch.max.rows": "500",
                # TODO
-               "connection.url": "jdbc:postgresql://localhost:5432/cta",
+               # refer to https://stackoverflow.com/questions/37482716/using-docker-to-launch-web-app-cant-connect-to-postgresql-db
+               # for the reason of why `localhost` doesn't work for docker
+               # Solution:
+               # run `docker run -it --rm alpine nslookup host.docker.internal`, below is the output, thus using that IP
+               # Name: host.docker.internal
+               # Address: 192.168.65.2
+               "connection.url": "jdbc:postgresql://192.168.65.2:5432/cta",
                # TODO
                "connection.user": "cta_admin",
                # TODO
@@ -51,7 +58,7 @@ def configure_connector():
                # TODO
                "incrementing.column.name": "stop_id",
                # TODO
-               "topic.prefix": "connect_",
+               "topic.prefix": "org.chicago.cta.connect_",
                # TODO
                "poll.interval.ms": "5000",
            }
@@ -62,8 +69,9 @@ def configure_connector():
     try:
         resp.raise_for_status()
         logger.debug("connector created successfully")
+        logger.info('connector %s created' % CONNECTOR_NAME)
     except:
-        logger.info("connector code not completed skipping connector creation")
+        logger.error(f"Failed to send data to REST Proxy {json.dumps(resp.json(), indent=2)}")
 
 
 if __name__ == "__main__":

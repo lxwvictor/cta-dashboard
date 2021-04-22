@@ -7,6 +7,18 @@ from confluent_kafka import avro
 from models import Turnstile
 from models.producer import Producer
 
+from avro.schema import Field
+# Fixes an issue with python3-avro. Below error met from run().
+# "TypeError: Object of type mappingproxy is not JSON serializable"
+# https://github.com/confluentinc/confluent-kafka-python/issues/610
+Field.to_json_old = Field.to_json
+def to_json(self, names=None):
+    to_dump = self.to_json_old(names)
+    type_name = type(to_dump["type"]).__name__
+    if type_name == "mappingproxy":
+        to_dump["type"] = to_dump["type"].copy()
+    return to_dump
+Field.to_json = to_json
 
 logger = logging.getLogger(__name__)
 
@@ -63,11 +75,7 @@ class Station(Producer):
         #
         #
         try:
-            self.producer.produce(
-                topic=self.topic_name,
-                key={"timestamp": self.time_millis()},
-                key_schema=self.key_schema,
-                value={
+            arrival_value = {
                     #
                     #
                     # TODO: Configure this
@@ -80,11 +88,18 @@ class Station(Producer):
                     "train_status": train.status.name,
                     "prev_station_id": prev_station_id,
                     "prev_direction": prev_direction
-                },
+                }
+
+            self.producer.produce(
+                topic=self.topic_name,
+                key={"timestamp": self.time_millis()},
+                key_schema=self.key_schema,
+                value=arrival_value,
                 value_schema=self.value_schema,
             )
+            logger.info("sent arrival info to kakfa topic: %s, %s" % (self.topic_name, arrival_value.items()))
         except:
-            logger.info("arrival kafka integration incomplete - skipping")
+            logger.warning("arrival kafka integration incomplete - skipping: %s" % self.topic_name)
 
     def __str__(self):
         return "Station | {:^5} | {:<30} | Direction A: | {:^5} | departing to {:<30} | Direction B: | {:^5} | departing to {:<30} | ".format(

@@ -1,1 +1,1 @@
-source /d/GoogleDrive/Study/Zvenv/data-streaming-consumers/Scripts/activate
+source /d/zvenv/data-streaming-consumers/Scripts/activate

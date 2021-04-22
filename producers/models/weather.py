@@ -111,21 +111,23 @@ class Weather(Producer):
                    #
                    "key_schema": json.dumps(self.key_schema),
                    "value_schema": json.dumps(self.value_schema),
-                   "records": [{
-                       "key": {"timestamp": self.time_millis()},
-                       "value": {"temperature": self.temp, "status": self.status.name}
-                    }]
+                   "records": [
+                        {
+                            "key": {"timestamp": self.time_millis()},
+                            "value": {"temperature": self.temp, "status": self.status.name}
+                        }
+                    ]
                }
            )
         )
 
         try:
             resp.raise_for_status()
+
+            logger.info(
+                "sent weather data to kafka, temp: %s, status: %s" % (
+                    self.temp,
+                    self.status.name,)
+            )
         except:
-            logger.info("weather kafka proxy integration incomplete - skipping")
-            
-        logger.debug(
-            "sent weather data to kafka, temp: %s, status: %s" % (
-            self.temp,
-            self.status.name,)
-        )
+            logger.warning("weather kafka proxy integration incomplete - skipping")

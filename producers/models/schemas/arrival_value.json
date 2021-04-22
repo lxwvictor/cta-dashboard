@@ -17,14 +17,16 @@
     },
     {
       "name": "line",
-      "type": {"type": "enum",
-        "name": "line_color",
+      "type": {
+        "type": "enum",
+        "name": "colors",
         "symbols": ["blue", "green", "red"]
       }
     },
     {
       "name": "train_status",
-      "type": {"type": "enum",
+      "type": {
+        "type": "enum",
         "name": "status",
         "symbols": ["out_of_service", "in_service", "broken_down"]
       }      

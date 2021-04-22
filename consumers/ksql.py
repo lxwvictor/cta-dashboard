@@ -65,3 +65,4 @@ def execute_statement():
 
 if __name__ == "__main__":
     execute_statement()
+    print('KSQL statements Done!')

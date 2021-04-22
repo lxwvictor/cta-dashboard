@@ -105,9 +105,10 @@ class KafkaConsumer:
             return 0
         elif message.error() is not None:
             logger.warning(f"error from consumer {message.error()}, topic: {self.topic_name_pattern}")
-            return 1
+            return 0
         else:
-            logger.info(f"topic: {self.topic_name_pattern}, consumed message {message.key()}: {message.value()}")
+            logger.info(f"topic: {self.topic_name_pattern}, received message {message.key()}: {message.value()}")
+            self.message_handler(message)
             return 1
 
         # logger.info("_consume is incomplete - skipping")

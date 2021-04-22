@@ -28,6 +28,7 @@ class Line:
         if value["line"] != self.color:
             return
         self.stations[value["station_id"]] = Station.from_message(value)
+        logger.info('handled station %s, added into %s line' % (value["station_id"], self.color))
 
     def _handle_arrival(self, message):
         """Updates train locations"""
@@ -54,21 +55,29 @@ class Line:
             value.get("direction"), value.get("train_id"), value.get("train_status")
         )
 
+        logger.info('handled line.arrival message, %s, %s' % (station_id, value.get('train_id')))
+
     def process_message(self, message):
         """Given a kafka message, extract data"""
+        # logger.info('started to process line message')
         # TODO: Based on the message topic, call the appropriate handler.
         if "org.chicago.cta.stations.table" in message.topic(): # Set the conditional correctly to the stations Faust Table
+            logger.info('%s, _handle_station' % message.topic())
             try:
                 value = json.loads(message.value())
                 self._handle_station(value)
             except Exception as e:
                 logger.fatal("bad station? %s, %s", value, e)
         elif 'org.chicago.cta.station.arrivals' in message.topic(): # Set the conditional to the arrival topic
+            logger.info('%s, _handle_arrival' % message.topic())
             self._handle_arrival(message)
         elif message.topic() == 'TURNSTILE_SUMMARY': # Set the conditional to the KSQL Turnstile Summary Topic
             json_data = json.loads(message.value())
             station_id = json_data.get("STATION_ID")
             station = self.stations.get(station_id)
+
+            logger.info('%s, station %s handles turnstile' % (message.topic(), station_id))
+
             if station is None:
                 logger.debug("unable to handle message due to missing station")
                 return
